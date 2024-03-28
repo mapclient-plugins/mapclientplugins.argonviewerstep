@@ -43,17 +43,37 @@
       <item row="1" column="0">
        <widget class="QLabel" name="labelAutoLoadBackupDocument">
         <property name="text">
-         <string>Auto load backup document:</string>
+         <string>Auto load visualisation document:</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QCheckBox" name="checkBoxAutoLoadBackupDocument">
+       <widget class="QCheckBox" name="checkBoxAutoLoadVisualisationDocument">
         <property name="text">
          <string/>
         </property>
         <property name="checked">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="comboBoxVisualisationDocuments">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <property name="insertPolicy">
+         <enum>QComboBox::InsertAtCurrent</enum>
+        </property>
+        <property name="placeholderText">
+         <string>&lt;new document&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Visualisation document:</string>
         </property>
        </widget>
       </item>

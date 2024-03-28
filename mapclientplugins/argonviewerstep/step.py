@@ -7,16 +7,14 @@ import os.path
 from PySide6 import QtGui, QtWidgets, QtCore
 
 from mapclient.mountpoints.workflowstep import WorkflowStepMountPoint
+from mapclient.settings.general import get_configuration_file
+
 from mapclientplugins.argonviewerstep.configuredialog import ConfigureDialog
 from mapclientplugins.argonviewerstep.view.argonviewerwidget import ArgonViewerWidget
 from mapclientplugins.argonviewerstep.model.argonviewermodel import ArgonViewerModel
 
 
 class ArgonViewerStep(WorkflowStepMountPoint):
-    """
-    Skeleton step which is intended to be a helpful starting point
-    for new steps.
-    """
 
     def __init__(self, location):
         super(ArgonViewerStep, self).__init__('Argon Viewer', location)
@@ -39,7 +37,8 @@ class ArgonViewerStep(WorkflowStepMountPoint):
         # Config:
         self._config = {
             'identifier': '',
-            'auto-load-backup-doc': True,
+            'auto-load-visualisation-doc': True,
+            'visualisation-doc': '',
         }
 
         # Port data:
@@ -48,20 +47,23 @@ class ArgonViewerStep(WorkflowStepMountPoint):
         self._view = None
 
     def _setup_model(self):
-        self._model = ArgonViewerModel()
+        self._model = ArgonViewerModel(self._config['visualisation-doc'])
         self._model.setPreviousDocumentsDirectory(self._previous_documents_directory())
+
+    def _update_visualisation_doc(self, visualisation_doc):
+        self._config['visualisation-doc'] = visualisation_doc
+        with open(get_configuration_file(self._location, self._config['identifier']), 'w') as f:
+            f.write(self.serialize())
 
     def execute(self):
         QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.CursorShape.WaitCursor)
         try:
             self._setup_model()
-            self._model.defineCurrentDocumentationLocation(self._file_locations)
             self._view = ArgonViewerWidget(self._model)
             self._view.set_location(self._location)
-            self._view.load(self._file_locations, self._config['auto-load-backup-doc'])
+            self._view.load(self._file_locations, self._config['auto-load-visualisation-doc'])
+            self._view.registerUpdateVisualisationDoc(self._update_visualisation_doc)
             self._view.registerDoneExecution(self._doneExecution)
-            self._view.clear_current_document_settings()
-
             self._setCurrentWidget(self._view)
         finally:
             QtWidgets.QApplication.restoreOverrideCursor()
@@ -107,6 +109,7 @@ class ArgonViewerStep(WorkflowStepMountPoint):
         """
         dlg = ConfigureDialog(self._main_window)
         dlg.identifierOccursCount = self._identifierOccursCount
+        dlg.setVisualisationDocumentsDir(self._previous_documents_directory())
         dlg.setConfig(self._config)
         dlg.validate()
         dlg.setModal(True)
@@ -144,6 +147,7 @@ class ArgonViewerStep(WorkflowStepMountPoint):
         :param string: JSON representation of the configuration in a string.
         """
         self._config.update(json.loads(string))
+        self._setup_model()
 
         d = ConfigureDialog()
         d.identifierOccursCount = self._identifierOccursCount
@@ -154,7 +158,4 @@ class ArgonViewerStep(WorkflowStepMountPoint):
         if self._model is None:
             self._setup_model()
 
-        with open(self._model.getCurrentDocumentSettingsFilename()) as f:
-            settings = json.load(f)
-
-        return [settings['current-document-name']]
+        return [self._model.getCurrentDocumentLocation()]

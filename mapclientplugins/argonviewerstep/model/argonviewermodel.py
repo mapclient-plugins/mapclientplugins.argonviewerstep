@@ -1,10 +1,5 @@
-"""
-Geometric fit model adding visualisations to github.com/ABI-Software/scaffoldfitter
-"""
-import hashlib
 import os
 import json
-import pathlib
 
 from cmlibs.argon.argondocument import ArgonDocument
 from cmlibs.argon.argonlogger import ArgonLogger
@@ -13,17 +8,17 @@ from cmlibs.zinc.result import RESULT_OK
 from cmlibs.utils.zinc.general import is_exf_file
 
 
-class ArgonViewerModel(object):
-    """
-    Geometric fit model adding visualisations to github.com/ABI-Software/scaffoldfitter
-    """
+def _define_current_document_name():
+    return f'document-{os.urandom(4).hex()}.json'
 
-    def __init__(self):
-        """
-        """
+
+class ArgonViewerModel(object):
+
+    def __init__(self, visualisation_doc):
+        self._settings = None
         self._document = None
         self._previous_documents_directory = None
-        self._current_document_location = None
+        self._current_document_name = visualisation_doc if visualisation_doc else _define_current_document_name()
         self._file_sources = []
 
     def setSources(self, sources):
@@ -32,16 +27,8 @@ class ArgonViewerModel(object):
     def getSources(self):
         return self._file_sources
 
-    def getCurrentDocumentSettingsFilename(self):
-        return os.path.join(self._previous_documents_directory, "current-document-settings.json")
-
-    def defineCurrentDocumentationLocation(self, file_locations):
-        normalised_file_locations = [pathlib.PureWindowsPath(os.path.relpath(file_location, self._previous_documents_directory)).as_posix() for file_location in file_locations]
-        file_location_hash = hashlib.md5(json.dumps(normalised_file_locations).encode('utf-8')).hexdigest()
-        self._current_document_location = os.path.join(self._previous_documents_directory, f"document-{file_location_hash}.json")
-
     def getCurrentDocumentLocation(self):
-        return self._current_document_location
+        return os.path.join(self._previous_documents_directory, self._current_document_name)
 
     def setPreviousDocumentsDirectory(self, directory):
         self._previous_documents_directory = directory

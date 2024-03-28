@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'configuredialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.1
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,9 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog,
-    QDialogButtonBox, QFormLayout, QGridLayout, QGroupBox,
-    QLabel, QLineEdit, QSizePolicy, QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QComboBox,
+    QDialog, QDialogButtonBox, QFormLayout, QGridLayout,
+    QGroupBox, QLabel, QLineEdit, QSizePolicy,
+    QWidget)
 
 class Ui_ConfigureDialog(object):
     def setupUi(self, ConfigureDialog):
@@ -52,11 +53,23 @@ class Ui_ConfigureDialog(object):
 
         self.formLayout.setWidget(1, QFormLayout.LabelRole, self.labelAutoLoadBackupDocument)
 
-        self.checkBoxAutoLoadBackupDocument = QCheckBox(self.configGroupBox)
-        self.checkBoxAutoLoadBackupDocument.setObjectName(u"checkBoxAutoLoadBackupDocument")
-        self.checkBoxAutoLoadBackupDocument.setChecked(True)
+        self.checkBoxAutoLoadVisualisationDocument = QCheckBox(self.configGroupBox)
+        self.checkBoxAutoLoadVisualisationDocument.setObjectName(u"checkBoxAutoLoadVisualisationDocument")
+        self.checkBoxAutoLoadVisualisationDocument.setChecked(True)
 
-        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.checkBoxAutoLoadBackupDocument)
+        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.checkBoxAutoLoadVisualisationDocument)
+
+        self.comboBoxVisualisationDocuments = QComboBox(self.configGroupBox)
+        self.comboBoxVisualisationDocuments.setObjectName(u"comboBoxVisualisationDocuments")
+        self.comboBoxVisualisationDocuments.setEditable(True)
+        self.comboBoxVisualisationDocuments.setInsertPolicy(QComboBox.InsertAtCurrent)
+
+        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.comboBoxVisualisationDocuments)
+
+        self.label = QLabel(self.configGroupBox)
+        self.label.setObjectName(u"label")
+
+        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.label)
 
 
         self.gridLayout.addWidget(self.configGroupBox, 0, 0, 1, 1)
@@ -73,7 +86,9 @@ class Ui_ConfigureDialog(object):
         ConfigureDialog.setWindowTitle(QCoreApplication.translate("ConfigureDialog", u"Configure Argon Viewer", None))
         self.configGroupBox.setTitle("")
         self.labelIdentifier.setText(QCoreApplication.translate("ConfigureDialog", u"Identifier:  ", None))
-        self.labelAutoLoadBackupDocument.setText(QCoreApplication.translate("ConfigureDialog", u"Auto load backup document:", None))
-        self.checkBoxAutoLoadBackupDocument.setText("")
+        self.labelAutoLoadBackupDocument.setText(QCoreApplication.translate("ConfigureDialog", u"Auto load visualisation document:", None))
+        self.checkBoxAutoLoadVisualisationDocument.setText("")
+        self.comboBoxVisualisationDocuments.setPlaceholderText(QCoreApplication.translate("ConfigureDialog", u"<new document>", None))
+        self.label.setText(QCoreApplication.translate("ConfigureDialog", u"Visualisation document:", None))
     # retranslateUi
 

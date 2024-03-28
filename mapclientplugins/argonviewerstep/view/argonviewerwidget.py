@@ -49,6 +49,7 @@ class ArgonViewerWidget(QtWidgets.QMainWindow):
         self._addDockWidgets()
 
         self._callback = None
+        self._visualisation_doc_callback = None
 
     def _onDocumentChanged(self):
         document = self._model.getDocument()
@@ -82,14 +83,12 @@ class ArgonViewerWidget(QtWidgets.QMainWindow):
         self._settings_file_name = file_name
 
     def _load_settings(self):
-        print('========== load ==========')
         settings_file = self._settings_file_name
         if os.path.isfile(settings_file):
             with open(settings_file, 'r') as f:
                 self._settings.update(json.load(f))
 
     def _save_settings(self):
-        print('========== save ==========')
         settings_file = self._settings_file_name
         with open(settings_file, 'w') as f:
             json.dump(self._settings, f)
@@ -378,6 +377,9 @@ class ArgonViewerWidget(QtWidgets.QMainWindow):
     def registerDoneExecution(self, callback):
         self._callback = callback
 
+    def registerUpdateVisualisationDoc(self, callback):
+        self._visualisation_doc_callback = callback
+
     def _viewTabCloseRequested(self, index):
         document = self._model.getDocument()
         view_manager = document.getViewManager()
@@ -437,13 +439,7 @@ class ArgonViewerWidget(QtWidgets.QMainWindow):
                 self._ui.viewTabWidget.blockSignals(False)
 
             current_document_location = self._model.getCurrentDocumentLocation()
-            document_settings = {
-                'current-document-name': os.path.join(os.path.relpath(os.path.dirname(current_document_location), self._location), os.path.basename(current_document_location)),
-            }
-
-            with open(self._model.getCurrentDocumentSettingsFilename(), 'w') as f:
-                json.dump(document_settings, f)
-
+            self._visualisation_doc_callback(os.path.basename(current_document_location))
             with open(current_document_location, 'w') as f:
                 f.write(document.serialize(base_path=os.path.dirname(current_document_location)))
 
@@ -452,7 +448,3 @@ class ArgonViewerWidget(QtWidgets.QMainWindow):
             QtWidgets.QApplication.restoreOverrideCursor()
 
         self._callback()
-
-    def clear_current_document_settings(self):
-        with open(self._model.getCurrentDocumentSettingsFilename(), 'w') as f:
-            json.dump({}, f)
